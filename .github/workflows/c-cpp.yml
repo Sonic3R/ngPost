@@ -22,6 +22,11 @@ jobs:
       run: cd src && qmake -o Makefile ngPost_cmd.pro && make -j$(nproc)
     - name: list src
       run: ls -alt src/
+    - name: (10) Save build artifact
+      uses: actions/upload-artifact@master
+      with:
+          name: ngpost
+          path: src/ngPost
 
   build_windows:
     runs-on: windows-2019
@@ -72,11 +77,13 @@ jobs:
             copy C:\Windows\System32\msvcp140.dll .
             copy C:\Windows\System32\vcruntime140.dll .
 
-    - name: List items from release
-      run: dir ${{ runner.temp }}\build\release
+    - name: (9) Zip build
+      working-directory: ${{ runner.temp }}
+      run:  |
+            7z a ngPost_cmd.zip ${{ runner.temp }}\build\* -r
 
-    - name: List items from build
-      run: dir ${{ runner.temp }}\build
-
-    - name: List items from src
-      run: dir ${{ env.SOURCE_DIR }}\src
+    - name: (10) Save build artifact
+      uses: actions/upload-artifact@master
+      with:
+          name: ${{ env.ARTIFACT }}
+          path: ${{ runner.temp }}\${{ env.ARTIFACT }}
