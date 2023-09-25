@@ -1,30 +1,6 @@
 QT += gui
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-CONFIG += use_hmi
+QT += widgets
 include(ngPost.pri)
-
-SOURCES += \
-    hmi/AboutNgPost.cpp \
-    hmi/AutoPostWidget.cpp \
-    hmi/CheckBoxCenterWidget.cpp \
-    hmi/PostingWidget.cpp \
-    hmi/SignedListWidget.cpp \
-    hmi/MainWindow.cpp
-
-HEADERS += \
-    hmi/AboutNgPost.h \
-    hmi/AutoPostWidget.h \
-    hmi/CheckBoxCenterWidget.h \
-    hmi/PostingWidget.h \
-    hmi/SignedListWidget.h \
-    hmi/MainWindow.h
-
-FORMS += \
-    hmi/AboutNgPost.ui \
-    hmi/AutoPostWidget.ui \
-    hmi/MainWindow.ui \
-    hmi/PostingWidget.ui
-
 
 #CONFIG  += use_hmi
 #
