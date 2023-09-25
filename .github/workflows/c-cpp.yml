@@ -28,7 +28,7 @@ jobs:
     env:
       SOURCE_DIR:   ${{ github.workspace }}
       QT_VERSION:   5.15.2
-      ARTIFACT:     qt-planets-build.zip
+      ARTIFACT:     ngPost_cmd.zip
 
     steps:
     - uses: actions/checkout@v3
@@ -71,3 +71,7 @@ jobs:
             copy C:\Windows\System32\vccorlib140.dll .
             copy C:\Windows\System32\msvcp140.dll .
             copy C:\Windows\System32\vcruntime140.dll .
+
+    - name: List items
+      working-directory: ${{ runner.temp }}\build\release
+      run: dir .
