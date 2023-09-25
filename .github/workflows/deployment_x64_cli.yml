@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: ngPost CLI x64
 
 on:
   push:
@@ -101,7 +101,7 @@ jobs:
     - name: Zip build
       working-directory: ${{ runner.temp }}
       run:  |
-            7z a ngPost_cmd.zip ${{ runner.temp }}\build\release\* -r -x!*.cpp -x!*.h -x!*.obj
+            7z a ngPost_cmd.zip ${{ runner.temp }}\build\* -r -xr!*.cpp -xr!*.h -xr!*.obj
 
     - name: Create Release
       id: win_create_release
