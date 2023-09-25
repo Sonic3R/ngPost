@@ -17,7 +17,7 @@ jobs:
       run: sudo sed -i 's/main$/main non-free/' /etc/apt/sources.list && sudo apt-get update && sudo apt-get install --no-install-recommends -y git build-essential qt5-qmake qtbase5-dev ca-certificates
     - name: cleanup and revert list
       run: sudo rm -rf /var/lib/apt/lists/*
-    - name: ls /usr/src/
-      run: ls /usr/src/
+    - name: ls
+      run: ls .
     #- name: make and compile src
     #  run: cd /usr/src/ng/src && qmake -o Makefile nzbCheck.pro && make -j$(nproc)
