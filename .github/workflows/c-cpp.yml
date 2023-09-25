@@ -7,8 +7,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
-
+  build_linux:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,3 +22,52 @@ jobs:
       run: cd src && qmake -o Makefile ngPost_cmd.pro && make -j$(nproc)
     - name: list src
       run: ls -alt src/
+
+  build_windows:
+    runs-on: windows-2019
+    env:
+      SOURCE_DIR:   ${{ github.workspace }}
+      QT_VERSION:   5.15.2
+      ARTIFACT:     qt-planets-build.zip
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: install qt
+      uses: jurplel/install-qt-action@v3.3.0
+      with:
+        version:      ${{ env.QT_VERSION }}
+        host:         windows
+        target:       desktop
+        arch:         win64_msvc2019_64
+        dir:          ${{ runner.temp }}
+        
+    - name: download JOM
+      uses: suisei-cn/actions-download-file@v1
+      with:
+          url:    http://download.qt.io/official_releases/jom/jom.zip
+          target: ${{ runner.temp }}\
+    - name: unzip jom
+      working-directory: ${{ runner.temp }}
+      run:  |
+            7z x jom.zip -ojom
+
+    - name: (6) Create build directory
+      run:  mkdir ${{ runner.temp }}\build
+
+    - name: (7) Set up Visual Studio shell
+      uses: egor-tensin/vs-shell@v2
+      with:
+          arch: x64
+
+    - name: (8) Build
+      working-directory: ${{ runner.temp }}\build
+      run:  |
+            qmake -r ${{ env.SOURCE_DIR }}\planets-qml.pro
+            ${{ runner.temp }}\jom\jom -j2
+            cd release
+            windeployqt --qmldir ${{ env.SOURCE_DIR }} planets-qml.exe --pdb --release --compiler-runtime
+            copy C:\Windows\System32\concrt140.dll . 
+            copy C:\Windows\System32\vccorlib140.dll .
+            copy C:\Windows\System32\msvcp140.dll .
+            copy C:\Windows\System32\vcruntime140.dll .
