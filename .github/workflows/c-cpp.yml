@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ "master" ]
 
+env:
+  version: '6.14.1'
+
 jobs:
   build_linux:
     runs-on: ubuntu-latest
@@ -21,15 +24,32 @@ jobs:
     - name: make and compile src
       run: cd src && qmake -o Makefile ngPost_cmd.pro && make -j$(nproc)
     - name: list src
-      run: ls -alt src/
-    - name: (10) Save build artifact
-      uses: actions/upload-artifact@master
+      run: ls -alt src/ && realpath src
+    - name: Create Release
+      id: linux_create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-          name: ngpost
-          path: src/ngPost
+        tag_name: linux-${{ env.version }}
+        release_name: Release Linux x64 ${{ env.version }}
+        draft: false
+        prerelease: false
+    - name: Upload ngpost
+      id: upload-release-asset-ngpost
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.wlinux_create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ${{ github.workspace }}\src\ngPost
+        asset_name: ngpost_linux_v${{ env.version }}
+        asset_content_type: application/octet-stream
 
   build_windows:
     runs-on: windows-2019
+    needs: [build_linux]
+    
     env:
       SOURCE_DIR:   ${{ github.workspace }}
       QT_VERSION:   5.15.2
@@ -77,13 +97,35 @@ jobs:
             copy C:\Windows\System32\msvcp140.dll .
             copy C:\Windows\System32\vcruntime140.dll .
 
-    - name: (9) Zip build
+    - name: Zip build
       working-directory: ${{ runner.temp }}
       run:  |
             7z a ngPost_cmd.zip ${{ runner.temp }}\build\* -r
 
-    - name: (10) Save build artifact
+    - name: Save build artifact
       uses: actions/upload-artifact@master
       with:
           name: ${{ env.ARTIFACT }}
           path: ${{ runner.temp }}\${{ env.ARTIFACT }}
+
+    - name: Create Release
+      id: win_create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: win-${{ env.version }}
+        release_name: Release Windows x64 ${{ env.version }}
+        draft: false
+        prerelease: false
+
+    - name: Upload ngpost
+      id: upload-release-asset-ngpost
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.win_create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ${{ runner.temp }}\${{ env.ARTIFACT }}
+        asset_name: ngpost_windows_v${{ env.version }}.zip
+        asset_content_type: application/zip
