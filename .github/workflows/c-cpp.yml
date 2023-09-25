@@ -66,7 +66,7 @@ jobs:
             qmake -r ${{ env.SOURCE_DIR }}\src\ngPost_cmd.pro
             ${{ runner.temp }}\jom\jom -j2
             cd release
-            windeployqt --qmldir ${{ env.SOURCE_DIR }} ngPost_cmd.exe --pdb --release --compiler-runtime
+            windeployqt --qmldir ${{ env.SOURCE_DIR }} ngPost.exe --pdb --release --compiler-runtime
             copy C:\Windows\System32\concrt140.dll . 
             copy C:\Windows\System32\vccorlib140.dll .
             copy C:\Windows\System32\msvcp140.dll .
