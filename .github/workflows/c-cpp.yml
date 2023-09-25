@@ -22,4 +22,4 @@ jobs:
     - name: make and compile src
       run: cd src && qmake -o Makefile ngPost_cmd.pro && make -j$(nproc)
     - name: list src
-      run: ls -alt .
+      run: ls -alt src/
