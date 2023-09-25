@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: install packages
-      run: sed -i 's/main$/main non-free/' /etc/apt/sources.list && apt-get update && apt-get install --no-install-recommends -y git build-essential qt5-qmake qtbase5-dev ca-certificates
+      run: apt-get update && apt-get install --no-install-recommends -y git build-essential qt5-qmake qtbase5-dev ca-certificates
     - name: cleanup and revert list
       run: rm -rf /var/lib/apt/lists/*
     - name: make and compile
