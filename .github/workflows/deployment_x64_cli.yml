@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 env:
-  version: '6.14.1'
+  version: '4.16.1'
 
 jobs:
   build_linux:
@@ -96,17 +96,12 @@ jobs:
             copy C:\Windows\System32\vccorlib140.dll .
             copy C:\Windows\System32\msvcp140.dll .
             copy C:\Windows\System32\vcruntime140.dll .
+            copy ${{ env.SOURCE_DIR }}\ngPost.conf
 
     - name: Zip build
       working-directory: ${{ runner.temp }}
       run:  |
-            7z a ngPost_cmd.zip ${{ runner.temp }}\build\* -r
-
-    - name: Save build artifact
-      uses: actions/upload-artifact@master
-      with:
-          name: ${{ env.ARTIFACT }}
-          path: ${{ runner.temp }}\${{ env.ARTIFACT }}
+            7z a ngPost_cmd.zip ${{ runner.temp }}\build\release\* -r -x!*.cpp -x!*.h -x!*.obj
 
     - name: Create Release
       id: win_create_release
