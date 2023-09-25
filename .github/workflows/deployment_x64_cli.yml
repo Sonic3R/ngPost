@@ -101,7 +101,7 @@ jobs:
     - name: Zip build
       working-directory: ${{ runner.temp }}
       run:  |
-            7z a ngPost_cmd.zip ${{ runner.temp }}\build\* -r -xr!*.cpp -xr!*.h -xr!*.obj
+            7z a ngPost_cmd.zip ${{ runner.temp }}\build\* -r
 
     - name: Create Release
       id: win_create_release
